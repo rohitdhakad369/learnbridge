@@ -1,4 +1,5 @@
 const BASE_URL = "https://learnbridge-o7r2.onrender.com/api/v1"
+// const BASE_URL = "http://localhost:5000/api/v1"
 
 // AUTH ENDPOINTS
 export const endpoints = {
