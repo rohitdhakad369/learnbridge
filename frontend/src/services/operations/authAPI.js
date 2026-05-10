@@ -32,10 +32,12 @@ export function sendOtp(email, navigate) {
       }
 
       toast.success("OTP Sent Successfully")
-      navigate("/verify-email")
+      if (navigate) {
+        navigate("/verify-email")
+      }
     } catch (error) {
       console.log("SENDOTP API ERROR............", error)
-      toast.error("Could Not Send OTP")
+      toast.error(error?.response?.data?.message || "Could Not Send OTP")
     }
     dispatch(setLoading(false))
     toast.dismiss(toastId)
@@ -75,7 +77,7 @@ export function signUp(
       navigate("/login")
     } catch (error) {
       console.log("SIGNUP API ERROR............", error)
-      toast.error("Signup Failed")
+      toast.error(error?.response?.data?.message || "Signup Failed")
       navigate("/signup")
     }
     dispatch(setLoading(false))

@@ -5,8 +5,25 @@ const jwt = require("jsonwebtoken")
 const otpGenerator = require("otp-generator")
 const mailSender = require("../utils/mailSender")
 const { passwordUpdated } = require("../mail/templates/passwordUpdate")
+const emailVerificationTemplate = require("../mail/templates/emailVerificationTemplate")
 const Profile = require("../models/Profile")
 require("dotenv").config()
+
+const generateUniqueOtp = async () => {
+  let otp
+  let existingOtp
+
+  do {
+    otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    })
+    existingOtp = await OTP.findOne({ otp })
+  } while (existingOtp)
+
+  return otp
+}
 
 // Signup Controller for Registering USers
 
@@ -183,6 +200,13 @@ exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body
 
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      })
+    }
+
     // Check if user is already present
     // Find user with provided email
     const checkUserPresent = await User.findOne({ email })
@@ -198,30 +222,32 @@ exports.sendotp = async (req, res) => {
       })
     }
 
-    var otp = otpGenerator.generate(6, {
-      upperCaseAlphabets: false,
-      lowerCaseAlphabets: false,
-      specialChars: false,
-    })
-    console.log(otp)
-    const result = await OTP.findOne({ otp: otp })
-    console.log("Result is Generate OTP Func")
-    console.log("OTP", otp)
-    console.log("Result", result)
-    while (result) {
-      otp = otpGenerator.generate(6, {
-        upperCaseAlphabets: false,
-      })
-    }
+    const otp = await generateUniqueOtp()
     const otpPayload = { email, otp }
     const otpBody = await OTP.create(otpPayload)
-    
-    console.log("OTP Body", otpBody)
-    res.status(200).json({
-      success: true,
-      message: `OTP Sent Successfully`,
-      otp,
-    })
+
+    try {
+      const mailResponse = await mailSender(
+        email,
+        "Verification Email",
+        emailVerificationTemplate(otp)
+      )
+
+      console.log("OTP email sent successfully:", mailResponse.response)
+
+      return res.status(200).json({
+        success: true,
+        message: `OTP Sent Successfully`,
+      })
+    } catch (error) {
+      await OTP.findByIdAndDelete(otpBody._id)
+      console.error("OTP email send failed:", error.message)
+
+      return res.status(500).json({
+        success: false,
+        message: "OTP email could not be sent. Please try again.",
+      })
+    }
   } catch (error) {
     console.log(error.message)
     return res.status(500).json({ success: false, error: error.message })

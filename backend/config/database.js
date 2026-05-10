@@ -6,10 +6,11 @@ const { MONGODB_URL } = process.env;
 exports.connect = () => {
 	mongoose
 		.connect(MONGODB_URL, {
-			useNewUrlparser: true,
-			useUnifiedTopology: true,
+			serverSelectionTimeoutMS: Number(
+				process.env.MONGODB_SERVER_SELECTION_TIMEOUT || 15000
+			),
 		})
-		.then(console.log(`DB Connection Success`))
+		.then(() => console.log(`DB Connection Success`))
 		.catch((err) => {
 			console.log(`DB Connection Failed`);
 			console.log(err);
