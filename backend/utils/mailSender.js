@@ -34,7 +34,7 @@ const mailSender = async (email, title, body) => {
   try {
     const transporter = createTransporter()
     const info = await transporter.sendMail({
-      from: `"Studynotion | CodeHelp" <${process.env.MAIL_USER}>`,
+      from: `"Learnbridge📒" <${process.env.MAIL_USER}>`,
       to: email,
       subject: title,
       html: body,

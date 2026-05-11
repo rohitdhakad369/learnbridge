@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 
 import IconBtn from "../../Common/IconBtn"
+import { ACCOUNT_TYPE } from "../../../utils/constants"
 
 export default function VideoDetailsSidebar({ setReviewModal }) {
   const [activeStatus, setActiveStatus] = useState("")
@@ -18,6 +19,12 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
     totalNoOfLectures,
     completedLectures,
   } = useSelector((state) => state.viewCourse)
+  const { user } = useSelector((state) => state.profile)
+
+  const backRoute =
+    user?.accountType === ACCOUNT_TYPE.INSTRUCTOR
+      ? "/dashboard/my-courses"
+      : "/dashboard/enrolled-courses"
 
   useEffect(() => {
     ;(() => {
@@ -45,18 +52,20 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
           <div className="flex w-full items-center justify-between ">
             <div
               onClick={() => {
-                navigate(`/dashboard/enrolled-courses`)
+                navigate(backRoute)
               }}
               className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-richblack-100 p-1 text-richblack-700 hover:scale-90"
               title="back"
             >
               <IoIosArrowBack size={30} />
             </div>
-            <IconBtn
-              text="Add Review"
-              customClasses="ml-auto"
-              onclick={() => setReviewModal(true)}
-            />
+            {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+              <IconBtn
+                text="Add Review"
+                customClasses="ml-auto"
+                onclick={() => setReviewModal(true)}
+              />
+            )}
           </div>
           <div className="flex flex-col">
             <p>{courseEntireData?.courseName}</p>

@@ -20,33 +20,63 @@ const VideoDetails = () => {
   const { courseSectionData, courseEntireData, completedLectures } =
     useSelector((state) => state.viewCourse)
 
-  const [videoData, setVideoData] = useState([])
+  const [videoData, setVideoData] = useState(null)
   const [previewSource, setPreviewSource] = useState("")
   const [videoEnded, setVideoEnded] = useState(false)
   const [loading, setLoading] = useState(false)
 
-      useEffect(() => {
-        if (!courseSectionData?.length) return
+  useEffect(() => {
+    if (!courseEntireData?._id) {
+      return
+    }
 
-        if (!courseId || !sectionId || !subSectionId) {
-          navigate(`/dashboard/enrolled-courses`)
-          return
-        }
+    if (!courseSectionData?.length) {
+      setVideoData(null)
+      setPreviewSource(courseEntireData?.thumbnail)
+      setVideoEnded(false)
+      return
+    }
 
-        const filteredData = courseSectionData.find(
-          (course) => course._id === sectionId
+    if (!courseId) {
+      return
+    }
+
+    if (!sectionId || !subSectionId) {
+      const firstSection = courseSectionData[0]
+      const firstSubSection = firstSection?.subSection?.[0]
+
+      if (firstSection && firstSubSection) {
+        navigate(
+          `/view-course/${courseId}/section/${firstSection._id}/sub-section/${firstSubSection._id}`,
+          { replace: true }
         )
+      }
 
-        const filteredVideoData = filteredData?.subSection?.find(
-          (data) => data._id === subSectionId
-        )
+      return
+    }
 
-        if (!filteredVideoData) return
+    const filteredData = courseSectionData.find((course) => course._id === sectionId)
 
-        setVideoData(filteredVideoData)
-        setPreviewSource(courseEntireData?.thumbnail)
-        setVideoEnded(false)
-      }, [courseSectionData, courseEntireData, location.pathname])
+    const filteredVideoData = filteredData?.subSection?.find(
+      (data) => data._id === subSectionId
+    )
+
+    if (!filteredVideoData) {
+      return
+    }
+
+    setVideoData(filteredVideoData)
+    setPreviewSource(courseEntireData?.thumbnail)
+    setVideoEnded(false)
+  }, [
+    courseEntireData,
+    courseId,
+    courseSectionData,
+    location.pathname,
+    navigate,
+    sectionId,
+    subSectionId,
+  ])
 
   // check if the lecture is the first video of the course
   const isFirstVideo = () => {
@@ -171,6 +201,19 @@ const VideoDetails = () => {
 
   return (
     <div className="flex flex-col gap-5 text-white">
+      {!courseSectionData?.length ? (
+        <div className="rounded-2xl border border-richblack-700 bg-richblack-800 p-8">
+          <h1 className="text-2xl font-semibold text-richblack-5">
+            Course classroom is ready
+          </h1>
+          <p className="mt-3 max-w-2xl text-richblack-200">
+            Is course me abhi lecture content add nahi hua hai, lekin right-side
+            chat panel se instructor aur enrolled students discussion start kar
+            sakte hain.
+          </p>
+        </div>
+      ) : (
+        <>
       {!videoData ? (
         <img
           src={previewSource}
@@ -242,6 +285,8 @@ const VideoDetails = () => {
 
       <h1 className="mt-4 text-3xl font-semibold">{videoData?.title}</h1>
       <p className="pt-2 pb-6">{videoData?.description}</p>
+        </>
+      )}
     </div>
   )
 }

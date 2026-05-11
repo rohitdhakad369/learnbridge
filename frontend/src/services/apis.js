@@ -41,6 +41,11 @@ export const courseEndpoints = {
   DELETE_COURSE_API: BASE_URL + "/course/deleteCourse",
   GET_FULL_COURSE_DETAILS_AUTHENTICATED:
     BASE_URL + "/course/getFullCourseDetails",
+  GET_COURSE_CHAT_API: BASE_URL + "/course/getCourseChat",
+  SEND_COURSE_CHAT_MESSAGE_API: BASE_URL + "/course/sendCourseChatMessage",
+  TOGGLE_COURSE_CHAT_PIN_API: BASE_URL + "/course/toggleCourseChatPin",
+  DELETE_COURSE_CHAT_MESSAGE_API:
+    BASE_URL + "/course/deleteCourseChatMessage",
   LECTURE_COMPLETION_API: BASE_URL + "/course/updateCourseProgress",
   CREATE_RATING_API: BASE_URL + "/course/createRating",
 }

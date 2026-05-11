@@ -1,6 +1,5 @@
 import { toast } from "react-hot-toast"
 
-import { updateCompletedLectures } from "../../slices/viewCourseSlice"
 // import { setLoading } from "../../slices/profileSlice";
 import { apiConnector } from "../apiConnector"
 import { courseEndpoints } from "../apis"
@@ -20,6 +19,10 @@ const {
   GET_ALL_INSTRUCTOR_COURSES_API,
   DELETE_COURSE_API,
   GET_FULL_COURSE_DETAILS_AUTHENTICATED,
+  GET_COURSE_CHAT_API,
+  SEND_COURSE_CHAT_MESSAGE_API,
+  TOGGLE_COURSE_CHAT_PIN_API,
+  DELETE_COURSE_CHAT_MESSAGE_API,
   CREATE_RATING_API,
   LECTURE_COMPLETION_API,
 } = courseEndpoints
@@ -328,12 +331,148 @@ export const getFullDetailsOfCourse = async (courseId, token) => {
     result = response?.data?.data
   } catch (error) {
     console.log("COURSE_FULL_DETAILS_API API ERROR............", error)
-    result = error.response.data
-    // toast.error(error.response.data.message);
+    toast.error(
+      error?.response?.data?.message || "Could not load course details"
+    )
+    result = null
   }
   toast.dismiss(toastId)
   //   dispatch(setLoading(false));
   return result
+}
+
+export const getCourseChat = async (
+  courseId,
+  token,
+  { showLoader = false, showErrorToast = true } = {}
+) => {
+  let result = null
+  const toastId = showLoader ? toast.loading("Loading chat...") : null
+
+  try {
+    const response = await apiConnector(
+      "POST",
+      GET_COURSE_CHAT_API,
+      {
+        courseId,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    )
+
+    if (!response?.data?.success) {
+      throw new Error(response?.data?.message)
+    }
+
+    result = response?.data?.data
+  } catch (error) {
+    console.log("GET_COURSE_CHAT_API ERROR............", error)
+    if (showErrorToast) {
+      toast.error(error?.response?.data?.message || "Could not load course chat")
+    }
+  }
+
+  if (toastId) {
+    toast.dismiss(toastId)
+  }
+
+  return result
+}
+
+export const sendCourseChatMessage = async (
+  courseId,
+  message,
+  mentions,
+  token
+) => {
+  let result = null
+
+  try {
+    const response = await apiConnector(
+      "POST",
+      SEND_COURSE_CHAT_MESSAGE_API,
+      {
+        courseId,
+        message,
+        mentions,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    )
+
+    if (!response?.data?.success) {
+      throw new Error(response?.data?.message)
+    }
+
+    result = response?.data?.data
+  } catch (error) {
+    console.log("SEND_COURSE_CHAT_MESSAGE_API ERROR............", error)
+    toast.error(error?.response?.data?.message || "Could not send message")
+  }
+
+  return result
+}
+
+export const toggleCourseChatPin = async (courseId, messageId, token) => {
+  let result = null
+
+  try {
+    const response = await apiConnector(
+      "POST",
+      TOGGLE_COURSE_CHAT_PIN_API,
+      {
+        courseId,
+        messageId,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    )
+
+    if (!response?.data?.success) {
+      throw new Error(response?.data?.message)
+    }
+
+    toast.success(response?.data?.message || "Pinned message updated")
+    result = response?.data?.data
+  } catch (error) {
+    console.log("TOGGLE_COURSE_CHAT_PIN_API ERROR............", error)
+    toast.error(error?.response?.data?.message || "Could not update pin")
+  }
+
+  return result
+}
+
+export const deleteCourseChatMessage = async (courseId, messageId, token) => {
+  let success = false
+
+  try {
+    const response = await apiConnector(
+      "DELETE",
+      DELETE_COURSE_CHAT_MESSAGE_API,
+      {
+        courseId,
+        messageId,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    )
+
+    if (!response?.data?.success) {
+      throw new Error(response?.data?.message)
+    }
+
+    toast.success(response?.data?.message || "Message deleted")
+    success = true
+  } catch (error) {
+    console.log("DELETE_COURSE_CHAT_MESSAGE_API ERROR............", error)
+    toast.error(error?.response?.data?.message || "Could not delete message")
+  }
+
+  return success
 }
 
 // mark a lecture as complete

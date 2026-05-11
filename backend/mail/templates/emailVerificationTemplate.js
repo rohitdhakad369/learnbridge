@@ -1,86 +1,120 @@
 const otpTemplate = (otp) => {
-	return `<!DOCTYPE html>
-	<html>
+  return `
+  <!DOCTYPE html>
+  <html>
 
-	<head>
-		<meta charset="UTF-8">
-		<title>OTP Verification Email</title>
-		<style>
-			body {
-				background-color: #ffffff;
-				font-family: Arial, sans-serif;
-				font-size: 16px;
-				line-height: 1.4;
-				color: #333333;
-				margin: 0;
-				padding: 0;
-			}
+  <head>
+    <meta charset="UTF-8" />
+    <title>OTP Verification Email</title>
 
-			.container {
-				max-width: 600px;
-				margin: 0 auto;
-				padding: 20px;
-				text-align: center;
-			}
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+      }
 
-			.logo {
-				max-width: 200px;
-				margin-bottom: 20px;
-			}
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
 
-			.message {
-				font-size: 18px;
-				font-weight: bold;
-				margin-bottom: 20px;
-			}
+      .logo {
+        width: 120px;
+        margin-bottom: 20px;
+      }
 
-			.body {
-				font-size: 16px;
-				margin-bottom: 20px;
-			}
+      .title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 10px;
+      }
 
-			.cta {
-				display: inline-block;
-				padding: 10px 20px;
-				background-color: #FFD60A;
-				color: #000000;
-				text-decoration: none;
-				border-radius: 5px;
-				font-size: 16px;
-				font-weight: bold;
-				margin-top: 20px;
-			}
+      .message {
+        font-size: 16px;
+        color: #4b5563;
+        line-height: 1.6;
+      }
 
-			.support {
-				font-size: 14px;
-				color: #999999;
-				margin-top: 20px;
-			}
+      .otp-box {
+        display: inline-block;
+        margin: 25px 0;
+        padding: 15px 35px;
+        background-color: #FFD60A;
+        color: #000;
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 5px;
+        border-radius: 8px;
+      }
 
-			.highlight {
-				font-weight: bold;
-			}
-		</style>
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #9ca3af;
+      }
 
-	</head>
+      a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+    </style>
+  </head>
 
-	<body>
-		<div class="container">
-			<img src="https://w7.pngwing.com/pngs/498/334/png-transparent-asian-girl-smiling-thumbnail.png" alt="Logo" />
-			<div class="message">OTP Verification Email</div>
-			<div class="body">
-				<p>Dear User,</p>
-				<p>Thank you for registering with StudyNotion. To complete your registration, please use the following OTP
-					(One-Time Password) to verify your account:</p>
-				<h2 class="highlight">${otp}</h2>
-				<p>This OTP is valid for 5 minutes. If you did not request this verification, please disregard this email.
-				Once your account is verified, you will have access to our platform and its features.</p>
-			</div>
-			<div class="support">If you have any questions or need assistance, please feel free to reach out to us at <a
-					href="mailto:info@studynotion.com">@studynotion.com</a>. We are here to help!</div>
-		</div>
-	</body>
+  <body>
+    <div class="container">
 
-	</html>`;
+      <!-- Logo -->
+      <img 
+        class="logo"
+        src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" 
+        alt="LearnBridge Logo"
+      />
+
+      <div class="title">
+        OTP Verification
+      </div>
+
+      <div class="message">
+        <p>Hello User,</p>
+
+        <p>
+          Thank you for registering with <strong>LearnBridge</strong>.
+          Please use the OTP below to verify your account:
+        </p>
+
+        <div class="otp-box">
+          ${otp}
+        </div>
+
+        <p>
+          This OTP is valid for <strong>5 minutes</strong>.
+        </p>
+
+        <p>
+          If you did not request this email, you can safely ignore it.
+        </p>
+      </div>
+
+      <div class="footer">
+        Need help? Contact us at
+        <a href="mailto:info@learnbridge.com">
+          info@learnbridge.com
+        </a>
+      </div>
+
+    </div>
+  </body>
+
+  </html>
+  `;
 };
+
 module.exports = otpTemplate;

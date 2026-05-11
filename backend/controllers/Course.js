@@ -5,6 +5,7 @@ const SubSection = require("../models/Subsection")
 const User = require("../models/User")
 const { uploadImageToCloudinary } = require("../utils/imageUploader")
 const CourseProgress = require("../models/CourseProgress")
+const CourseChatMessage = require("../models/CourseChatMessage")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
 // Function to create a new course
 exports.createCourse = async (req, res) => {
@@ -365,18 +366,35 @@ exports.getFullCourseDetails = async (req, res) => {
       })
       .exec()
 
-    let courseProgressCount = await CourseProgress.findOne({
-      courseID: courseId,
-      userId: userId,
-    })
-
-    console.log("courseProgressCount : ", courseProgressCount)
-
     if (!courseDetails) {
       return res.status(400).json({
         success: false,
         message: `Could not find course with id: ${courseId}`,
       })
+    }
+
+    const isInstructor =
+      courseDetails.instructor._id.toString() === userId.toString()
+    const isEnrolledStudent = courseDetails.studentsEnroled.some(
+      (studentId) => studentId.toString() === userId.toString()
+    )
+
+    if (!isInstructor && !isEnrolledStudent) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have access to this course",
+      })
+    }
+
+    let courseProgressCount = null
+
+    if (isEnrolledStudent) {
+      courseProgressCount = await CourseProgress.findOne({
+        courseID: courseId,
+        userId: userId,
+      })
+
+      console.log("courseProgressCount : ", courseProgressCount)
     }
 
     // if (courseDetails.status === "Draft") {
@@ -475,6 +493,7 @@ exports.deleteCourse = async (req, res) => {
     }
 
     // Delete the course
+    await CourseChatMessage.deleteMany({ course: courseId })
     await Course.findByIdAndDelete(courseId)
 
     return res.status(200).json({

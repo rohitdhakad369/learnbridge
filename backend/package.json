@@ -1,14 +1,14 @@
 {
-	"name": "studynotion-backend",
+	"name": "learnbridge-backend",
 	"version": "1.0.0",
-	"description": "studynotion-backend",
+	"description": "learnbridge-backend",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
 		"dev": "nodemon index.js"
 	},
 	"keywords": [
-		"studynotion-backend"
+		"learnbridge-backend"
 	],
 	"author": "Saikat Mukherjee",
 	"license": "ISC",

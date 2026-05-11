@@ -45,6 +45,12 @@ const {
   getAllRatingReview,
 } = require("../controllers/RatingandReview")
 const {
+  getCourseChatMessages,
+  createCourseChatMessage,
+  toggleCourseChatPin,
+  deleteCourseChatMessage,
+} = require("../controllers/CourseChat")
+const {
   updateCourseProgress,
   getProgressPercentage,
 } = require("../controllers/courseProgress")
@@ -79,6 +85,10 @@ router.get("/getAllCourses", getAllCourses)
 router.post("/getCourseDetails", getCourseDetails)
 // Get Details for a Specific Courses
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.post("/getCourseChat", auth, getCourseChatMessages)
+router.post("/sendCourseChatMessage", auth, createCourseChatMessage)
+router.post("/toggleCourseChatPin", auth, isInstructor, toggleCourseChatPin)
+router.delete("/deleteCourseChatMessage", auth, deleteCourseChatMessage)
 // To Update Course Progress
 router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress)
 // To get Course Progress
