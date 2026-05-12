@@ -4,7 +4,7 @@ import { NavLink, matchPath, useLocation } from "react-router-dom"
 
 import { resetCourseState } from "../../../slices/courseSlice"
 
-export default function SidebarLink({ link, iconName }) {
+export default function SidebarLink({ link, iconName, onClick }) {
   const Icon = Icons[iconName]
   const location = useLocation()
   const dispatch = useDispatch()
@@ -16,12 +16,15 @@ export default function SidebarLink({ link, iconName }) {
   return (
     <NavLink
       to={link.path}
-      onClick={() => dispatch(resetCourseState())}
-      className={`relative px-8 py-2 text-sm font-medium ${
+      onClick={() => {
+        dispatch(resetCourseState())
+        onClick?.()
+      }}
+      className={`relative px-5 py-3 text-sm font-medium transition-all duration-200 lg:px-8 lg:py-2 ${
         matchRoute(link.path)
           ? "bg-yellow-800 text-yellow-50"
-          : "bg-opacity-0 text-richblack-300"
-      } transition-all duration-200`}
+          : "bg-opacity-0 text-richblack-300 hover:bg-richblack-700/40"
+      }`}
     >
       <span
         className={`absolute left-0 top-0 h-full w-[0.15rem] bg-yellow-50 ${
@@ -29,9 +32,8 @@ export default function SidebarLink({ link, iconName }) {
         }`}
       ></span>
       <div className="flex items-center gap-x-2">
-        {/* Icon Goes Here */}
         <Icon className="text-lg" />
-        <span>{link.name}</span>
+        <span className="whitespace-nowrap">{link.name}</span>
       </div>
     </NavLink>
   )

@@ -37,14 +37,12 @@ export default function CourseInformationForm() {
       setLoading(true)
       const categories = await fetchCourseCategories()
       if (categories.length > 0) {
-        // console.log("categories", categories)
         setCourseCategories(categories)
       }
       setLoading(false)
     }
-    // if form is in edit mode
+
     if (editCourse) {
-      // console.log("data populated", editCourse)
       setValue("courseTitle", course.courseName)
       setValue("courseShortDesc", course.courseDescription)
       setValue("coursePrice", course.price)
@@ -61,7 +59,6 @@ export default function CourseInformationForm() {
 
   const isFormUpdated = () => {
     const currentValues = getValues()
-    // console.log("changes after editing form values:", currentValues)
     if (
       currentValues.courseTitle !== course.courseName ||
       currentValues.courseShortDesc !== course.courseDescription ||
@@ -78,19 +75,11 @@ export default function CourseInformationForm() {
     return false
   }
 
-  //   handle next button click
   const onSubmit = async (data) => {
-    // console.log(data)
-
     if (editCourse) {
-      // const currentValues = getValues()
-      // console.log("changes after editing form values:", currentValues)
-      // console.log("now course:", course)
-      // console.log("Has Form Changed:", isFormUpdated())
       if (isFormUpdated()) {
         const currentValues = getValues()
         const formData = new FormData()
-        // console.log(data)
         formData.append("courseId", course._id)
         if (currentValues.courseTitle !== course.courseName) {
           formData.append("courseName", data.courseTitle)
@@ -122,7 +111,6 @@ export default function CourseInformationForm() {
         if (currentValues.courseImage !== course.thumbnail) {
           formData.append("thumbnailImage", data.courseImage)
         }
-        // console.log("Edit Form data: ", formData)
         setLoading(true)
         const result = await editCourseDetails(formData, token)
         setLoading(false)
@@ -158,9 +146,8 @@ export default function CourseInformationForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-8 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-6"
+      className="space-y-8 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-5 sm:p-6 md:p-8"
     >
-      {/* Course Title */}
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="courseTitle">
           Course Title <sup className="text-pink-200">*</sup>
@@ -177,7 +164,7 @@ export default function CourseInformationForm() {
           </span>
         )}
       </div>
-      {/* Course Short Description */}
+
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="courseShortDesc">
           Course Short Description <sup className="text-pink-200">*</sup>
@@ -186,7 +173,7 @@ export default function CourseInformationForm() {
           id="courseShortDesc"
           placeholder="Enter Description"
           {...register("courseShortDesc", { required: true })}
-          className="form-style resize-x-none min-h-[130px] w-full"
+          className="form-style min-h-[130px] w-full resize-none"
         />
         {errors.courseShortDesc && (
           <span className="ml-2 text-xs tracking-wide text-pink-200">
@@ -194,7 +181,7 @@ export default function CourseInformationForm() {
           </span>
         )}
       </div>
-      {/* Course Price */}
+
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="coursePrice">
           Course Price <sup className="text-pink-200">*</sup>
@@ -220,7 +207,7 @@ export default function CourseInformationForm() {
           </span>
         )}
       </div>
-      {/* Course Category */}
+
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="courseCategory">
           Course Category <sup className="text-pink-200">*</sup>
@@ -247,7 +234,7 @@ export default function CourseInformationForm() {
           </span>
         )}
       </div>
-      {/* Course Tags */}
+
       <ChipInput
         label="Tags"
         name="courseTags"
@@ -257,7 +244,7 @@ export default function CourseInformationForm() {
         setValue={setValue}
         getValues={getValues}
       />
-      {/* Course Thumbnail Image */}
+
       <Upload
         name="courseImage"
         label="Course Thumbnail"
@@ -266,7 +253,7 @@ export default function CourseInformationForm() {
         errors={errors}
         editData={editCourse ? course?.thumbnail : null}
       />
-      {/* Benefits of the course */}
+
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="courseBenefits">
           Benefits of the course <sup className="text-pink-200">*</sup>
@@ -275,7 +262,7 @@ export default function CourseInformationForm() {
           id="courseBenefits"
           placeholder="Enter benefits of the course"
           {...register("courseBenefits", { required: true })}
-          className="form-style resize-x-none min-h-[130px] w-full"
+          className="form-style min-h-[130px] w-full resize-none"
         />
         {errors.courseBenefits && (
           <span className="ml-2 text-xs tracking-wide text-pink-200">
@@ -283,7 +270,7 @@ export default function CourseInformationForm() {
           </span>
         )}
       </div>
-      {/* Requirements/Instructions */}
+
       <RequirementsField
         name="courseRequirements"
         label="Requirements/Instructions"
@@ -292,20 +279,21 @@ export default function CourseInformationForm() {
         errors={errors}
         getValues={getValues}
       />
-      {/* Next Button */}
-      <div className="flex justify-end gap-x-2">
+
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {editCourse && (
           <button
             onClick={() => dispatch(setStep(2))}
             disabled={loading}
-            className={`flex cursor-pointer items-center gap-x-2 rounded-md bg-richblack-300 py-[8px] px-[20px] font-semibold text-richblack-900`}
+            className="w-full cursor-pointer rounded-md bg-richblack-300 px-[20px] py-[8px] font-semibold text-richblack-900 sm:w-auto"
           >
-            Continue Wihout Saving
+            Continue Without Saving
           </button>
         )}
         <IconBtn
           disabled={loading}
           text={!editCourse ? "Next" : "Save Changes"}
+          customClasses="w-full justify-center sm:w-auto"
         >
           <MdNavigateNext />
         </IconBtn>

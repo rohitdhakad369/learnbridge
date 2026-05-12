@@ -31,11 +31,8 @@ export default function CourseBuilderForm() {
   const [editSectionName, setEditSectionName] = useState(null)
   const dispatch = useDispatch()
 
-  // handle form submission
   const onSubmit = async (data) => {
-    // console.log(data)
     setLoading(true)
-
     let result
 
     if (editSectionName) {
@@ -47,7 +44,6 @@ export default function CourseBuilderForm() {
         },
         token
       )
-      // console.log("edit", result)
     } else {
       result = await createSection(
         {
@@ -57,8 +53,8 @@ export default function CourseBuilderForm() {
         token
       )
     }
+
     if (result) {
-      // console.log("section result", result)
       dispatch(setCourse(result))
       setEditSectionName(null)
       setValue("sectionName", "")
@@ -100,7 +96,7 @@ export default function CourseBuilderForm() {
   }
 
   return (
-    <div className="space-y-8 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-6">
+    <div className="space-y-8 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-5 sm:p-6 md:p-8">
       <p className="text-2xl font-semibold text-richblack-5">Course Builder</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex flex-col space-y-2">
@@ -120,12 +116,13 @@ export default function CourseBuilderForm() {
             </span>
           )}
         </div>
-        <div className="flex items-end gap-x-4">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end">
           <IconBtn
             type="submit"
             disabled={loading}
             text={editSectionName ? "Edit Section Name" : "Create Section"}
             outline={true}
+            customClasses="w-full justify-center sm:w-auto"
           >
             <IoAddCircleOutline size={20} className="text-yellow-50" />
           </IconBtn>
@@ -143,15 +140,19 @@ export default function CourseBuilderForm() {
       {course.courseContent.length > 0 && (
         <NestedView handleChangeEditSectionName={handleChangeEditSectionName} />
       )}
-      {/* Next Prev Button */}
-      <div className="flex justify-end gap-x-3">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           onClick={goBack}
-          className={`flex cursor-pointer items-center gap-x-2 rounded-md bg-richblack-300 py-[8px] px-[20px] font-semibold text-richblack-900`}
+          className="w-full cursor-pointer rounded-md bg-richblack-300 px-[20px] py-[8px] font-semibold text-richblack-900 sm:w-auto"
         >
           Back
         </button>
-        <IconBtn disabled={loading} text="Next" onclick={goToNext}>
+        <IconBtn
+          disabled={loading}
+          text="Next"
+          onclick={goToNext}
+          customClasses="w-full justify-center sm:w-auto"
+        >
           <MdNavigateNext />
         </IconBtn>
       </div>

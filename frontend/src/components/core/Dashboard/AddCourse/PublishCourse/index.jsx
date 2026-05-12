@@ -21,7 +21,7 @@ export default function PublishCourse() {
     if (course?.status === COURSE_STATUS.PUBLISHED) {
       setValue("public", true)
     }
-  }, [])
+  }, [course?.status, setValue])
 
   const goBack = () => {
     dispatch(setStep(2))
@@ -33,14 +33,11 @@ export default function PublishCourse() {
   }
 
   const handleCoursePublish = async () => {
-    // check if form has been updated or not
     if (
       (course?.status === COURSE_STATUS.PUBLISHED &&
         getValues("public") === true) ||
       (course?.status === COURSE_STATUS.DRAFT && getValues("public") === false)
     ) {
-      // form has not been updated
-      // no need to make api call
       goToCourses()
       return
     }
@@ -58,25 +55,23 @@ export default function PublishCourse() {
     setLoading(false)
   }
 
-  const onSubmit = (data) => {
-    // console.log(data)
+  const onSubmit = () => {
     handleCoursePublish()
   }
 
   return (
-    <div className="rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-6">
+    <div className="rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-5 sm:p-6 md:p-8">
       <p className="text-2xl font-semibold text-richblack-5">
         Publish Settings
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Checkbox */}
         <div className="my-6 mb-8">
           <label htmlFor="public" className="inline-flex items-center text-lg">
             <input
               type="checkbox"
               id="public"
               {...register("public")}
-              className="border-gray-300 h-4 w-4 rounded bg-richblack-500 text-richblack-400 focus:ring-2 focus:ring-richblack-5"
+              className="h-4 w-4 rounded border-gray-300 bg-richblack-500 text-richblack-400 focus:ring-2 focus:ring-richblack-5"
             />
             <span className="ml-2 text-richblack-400">
               Make this course as public
@@ -84,17 +79,20 @@ export default function PublishCourse() {
           </label>
         </div>
 
-        {/* Next Prev Button */}
-        <div className="ml-auto flex max-w-max items-center gap-x-4">
+        <div className="flex flex-col-reverse gap-3 sm:ml-auto sm:max-w-max sm:flex-row sm:items-center">
           <button
             disabled={loading}
             type="button"
             onClick={goBack}
-            className="flex cursor-pointer items-center gap-x-2 rounded-md bg-richblack-300 py-[8px] px-[20px] font-semibold text-richblack-900"
+            className="w-full cursor-pointer rounded-md bg-richblack-300 px-[20px] py-[8px] font-semibold text-richblack-900 sm:w-auto"
           >
             Back
           </button>
-          <IconBtn disabled={loading} text="Save Changes" />
+          <IconBtn
+            disabled={loading}
+            text="Save Changes"
+            customClasses="w-full justify-center sm:w-auto"
+          />
         </div>
       </form>
     </div>
